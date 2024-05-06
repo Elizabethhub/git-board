@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import axios from "axios";
 import { IssuesState, useIssuesStore } from "./store";
 import { Input, Button, Row, Col, List, Pagination } from "antd";
@@ -6,6 +6,7 @@ import { SearchOutlined } from "@ant-design/icons";
 import { DragDropContext, Droppable, Draggable, DropResult } from "react-beautiful-dnd";
 import { Issue } from "./types";
 import styles from "./styles.module.css";
+// import Counter from "./Counter";
 
 const App: React.FC = () => {
   const [repoUrl, setRepoUrl] = useState("");
@@ -93,61 +94,64 @@ const App: React.FC = () => {
 
   // }
   return (
-    <DragDropContext onDragEnd={handleDragEnd}>
-      <div className={styles.container}>
-        <div className={styles.contentWrapper}>
-          <Row className={styles.inputRow} gutter={16} align="middle">
-            <Col span={16}>
-              <Input placeholder="Enter GitHub repo URL" value={repoUrl} onChange={(e) => setRepoUrl(e.target.value)} />
-            </Col>
-            <Col>
-              <Button type="primary" icon={<SearchOutlined />} onClick={handleLoadIssues}>
-                Load
-              </Button>
-            </Col>
-          </Row>
-
-          <Row gutter={16}>
-            {["todo", "inProgress", "done"].map((listKey) => (
-              <Col key={listKey} className={styles.column} span={8}>
-                <Droppable droppableId={listKey}>
-                  {(provided) => (
-                    <div ref={provided.innerRef} {...provided.droppableProps}>
-                      <List
-                        header={<h2 className={styles.columnHeader}>{capitalizeFirstLetter(listKey)}</h2>}
-                        dataSource={issues[listKey as keyof typeof issues]}
-                        renderItem={(item: Issue, index: number) => (
-                          <Draggable key={item.id.toString()} draggableId={item.id.toString()} index={index}>
-                            {(provided) => (
-                              <div ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps}>
-                                <List.Item style={{ padding: "6px" }}>{item.title}</List.Item>
-                              </div>
-                            )}
-                          </Draggable>
-                        )}
-                      />
-                      {provided.placeholder}
-                    </div>
-                  )}
-                </Droppable>
+    <>
+      {/* <Counter /> */}
+      <DragDropContext onDragEnd={handleDragEnd}>
+        <div className={styles.container}>
+          <div className={styles.contentWrapper}>
+            <Row className={styles.inputRow} gutter={16} align="middle">
+              <Col span={16}>
+                <Input placeholder="Enter GitHub repo URL" value={repoUrl} onChange={(e) => setRepoUrl(e.target.value)} />
               </Col>
-            ))}
-          </Row>
+              <Col>
+                <Button type="primary" icon={<SearchOutlined />} onClick={handleLoadIssues}>
+                  Load
+                </Button>
+              </Col>
+            </Row>
+
+            <Row gutter={16}>
+              {["todo", "inProgress", "done"].map((listKey) => (
+                <Col key={listKey} className={styles.column} span={8}>
+                  <Droppable droppableId={listKey}>
+                    {(provided) => (
+                      <div ref={provided.innerRef} {...provided.droppableProps}>
+                        <List
+                          header={<h2 className={styles.columnHeader}>{capitalizeFirstLetter(listKey)}</h2>}
+                          dataSource={issues[listKey as keyof typeof issues]}
+                          renderItem={(item: Issue, index: number) => (
+                            <Draggable key={item.id.toString()} draggableId={item.id.toString()} index={index}>
+                              {(provided) => (
+                                <div ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps}>
+                                  <List.Item style={{ padding: "6px" }}>{item.title}</List.Item>
+                                </div>
+                              )}
+                            </Draggable>
+                          )}
+                        />
+                        {provided.placeholder}
+                      </div>
+                    )}
+                  </Droppable>
+                </Col>
+              ))}
+            </Row>
+          </div>
         </div>
-      </div>
-      {pagination.totalItems > 0 && (
-        <div style={{ textAlign: "center", marginTop: "20px" }}>
-          <Pagination
-            current={pagination.currentPage}
-            pageSize={pagination.pageSize}
-            total={pagination.totalItems}
-            onChange={handlePageChange}
-            onShowSizeChange={handlePageSizeChange}
-            showSizeChanger
-          />
-        </div>
-      )}
-    </DragDropContext>
+        {pagination.totalItems > 0 && (
+          <div style={{ textAlign: "center", marginTop: "20px" }}>
+            <Pagination
+              current={pagination.currentPage}
+              pageSize={pagination.pageSize}
+              total={pagination.totalItems}
+              onChange={handlePageChange}
+              onShowSizeChange={handlePageSizeChange}
+              showSizeChanger
+            />
+          </div>
+        )}
+      </DragDropContext>
+    </>
   );
 };
 const capitalizeFirstLetter = (str: string) => {
